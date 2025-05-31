@@ -256,8 +256,7 @@ namespace Asana
             Console.Write($"ToDos in {proj.Name}:");
             foreach (var t in proj.ToDos)
             {
-                if (t.ProjectId == id)
-                    Console.WriteLine($"#{t.Id}: {t}");
+                Console.WriteLine($"#{t.Id}: {t}");
             }
 
         }
