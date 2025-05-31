@@ -32,6 +32,7 @@ namespace Asana
                 Console.WriteLine("8. List all Projects");
                 Console.WriteLine("9. List all ToDos in a Project");
                 Console.WriteLine("0. Exit");
+                Console.Write("Choice: ");
 
                 var choice = Console.ReadLine() ?? "0";
 
@@ -39,6 +40,8 @@ namespace Asana
                 {
                     switch (choiceInt)
                     {
+                        case 0:
+                            break;
                         case 1:
                             var todo = CreateToDo();
                             toDos.Add(todo);
@@ -82,17 +85,12 @@ namespace Asana
                     Console.WriteLine($"ERROR: {choice} is not a valid menu selection");
                 }
 
-                if (toDos.Any())
-                {
-                    Console.WriteLine(toDos.Last());
-                }
-
             } while (choiceInt != 0);
 
         }
         private static bool DeleteToDo()
         {
-            Console.Write("Enter ToDo ID:");
+            Console.Write("Enter ToDo ID: ");
             if (int.TryParse(Console.ReadLine(), out var id))
             {
                 int index = -1;
@@ -121,16 +119,42 @@ namespace Asana
         }
         private static void UpdateTodo()
         {
-            if (DeleteToDo() == false)
-                return;
-            var todo = CreateToDo();
-            Console.WriteLine("ToDo updated");
-            toDos.Add(todo);
+            Console.Write("Enter ToDo ID: ");
+            if (int.TryParse(Console.ReadLine(), out var id))
+            {
+                int index = -1;
+                for (int i = 0; i < toDos.Count; i++)
+                    if (toDos[i].Id == id)
+                    {
+                        index = i;
+                        break;
+                    }
+                if (index >= 0)
+                {
+                    Console.Write("Name: ");
+                    toDos[index].Name = Console.ReadLine();
+                    Console.Write("Description: ");
+                    toDos[index].Description = Console.ReadLine();
+                    Console.Write("Priority (1-5): ");
+                    int.TryParse(Console.ReadLine(), out int priority);
+                    toDos[index].Priority = priority;
+                    Console.Write("Complete? (y/n): ");
+                    var complete = Console.ReadLine();
+                    bool done = false;
+                    if (complete?.ToLower() == "y")
+                        done = true;
+                    else
+                        done = false;
+                    toDos[index].IsCompleted = done;
+                    Console.WriteLine("ToDo updated");
+                    return;
+                }
+            }
         }
 
         private static void ListAllToDos()
         {
-            Console.WriteLine("All ToDos:");
+            Console.WriteLine("All ToDos: ");
             foreach (var t in toDos)
                 Console.WriteLine($"#{t.Id}: {t}");
         }
@@ -167,13 +191,41 @@ namespace Asana
 
         private static void UpdateProject()
         {
-            if (DeleteProject() == false)
-                return;
-            var proj = CreateProject();
-            Console.WriteLine("Project updated.");
-            projects.Add(proj);
+            Console.Write("Enter Project ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                int index = -1;
+                for (int i = 0; i < projects.Count; i++)
+                    if (projects[i].Id == id)
+                    {
+                        index = i;
+                        break;
+                    }
+                if (index >= 0)
+                {
+                    Console.Write("Project Name: ");
+                    projects[index].Name = Console.ReadLine();
+                    Console.Write("Description: ");
+                    projects[index].Description = Console.ReadLine();
+                    Console.Write("Add ToDo to Project (ToDo ID): ");
+                    if(int.TryParse(Console.ReadLine(), out int toDoId))
+                    {
+                        int toDoIndex = -1;
+                        for(int i = 0; i < toDos.Count; i++)
+                            if (toDos[i].Id == toDoId)
+                            {
+                                toDoIndex = i;
+                                break;
+                            }
+                        projects[index].ToDos.Add(toDos[toDoIndex]);
+                    }
+                    Console.Write("Completion Percentage: ");
+                    if (int.TryParse(Console.ReadLine(), out int percent))
+                        projects[index].CompletionPercent = percent;
+                    
+                }
+            }
         }
-
         private static void ListAllProjects()
         {
             Console.WriteLine("All Projects:");
@@ -202,7 +254,7 @@ namespace Asana
                 return;
             }
             Console.Write($"ToDos in {proj.Name}:");
-            foreach (var t in toDos)
+            foreach (var t in proj.ToDos)
             {
                 if (t.ProjectId == id)
                     Console.WriteLine($"#{t.Id}: {t}");
@@ -211,39 +263,31 @@ namespace Asana
         }
 
 
-
-
         private static ToDo CreateToDo()
         {
-            Console.Write("Name:");
+            Console.Write("Name: ");
             var name = Console.ReadLine();
-            Console.Write("Description:");
+            Console.Write("Description: ");
             var description = Console.ReadLine();
             Console.Write("Priority (1-5): ");
             int.TryParse(Console.ReadLine(), out int priority);
-            Console.Write("Complete? (y/n)");
-            var complete = Console.ReadLine();
-            bool done = false;
-            if (complete?.ToLower() == "y")
-                done = true;
-            else
-                done = false;
+
             return new ToDo
             {
                 Id = nextToDoId++,
                 Name = name,
                 Description = description,
                 Priority = priority,
-                IsCompleted = done
+                IsCompleted = false
             };
 
         }
 
         private static Project CreateProject()
         {
-            Console.Write("Project Name:");
+            Console.Write("Project Name: ");
             var name = Console.ReadLine();
-            Console.Write("Description");
+            Console.Write("Description: ");
             var description = Console.ReadLine();
 
             return new Project
@@ -251,7 +295,7 @@ namespace Asana
                 Id = nextProjectId++,
                 Name = name,
                 Description = description,
-                CompletionPercent = 0
+                CompletionPercent = 0,
             };
         }
         

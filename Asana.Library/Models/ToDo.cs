@@ -19,7 +19,10 @@ namespace Asana.Library.Models
 
         public override string ToString()
         {
-            return $"{Name} - {Description}";
+            string? comp = "Not Completed";
+            if (IsCompleted == true)
+                comp = "Completed";
+            return $"{Name} - {Description} - {comp}";
         }
     }
 }

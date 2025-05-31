@@ -12,11 +12,11 @@ namespace Asana.Library.Models
         public string? Name { get; set; }
         public string? Description { get; set; }
         public double CompletionPercent { get; set; }
-        public List<ToDo> ToDos { get; set; } = new();
+        public List<ToDo> ToDos { get; set; } = new List<ToDo>();
 
         public override string ToString()
         {
-            return $"{Name} - {Description} (Completion: {CompletionPercent * 100}%)";
+            return $"{Name} - {Description} (Completion: {CompletionPercent}%)";
         }
     }
 }
