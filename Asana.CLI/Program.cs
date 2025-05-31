@@ -49,7 +49,7 @@ namespace Asana
                             break;
                         case 2:
                             if (DeleteToDo() == true)
-                                Console.WriteLine("ToDo deleted");
+                                Console.WriteLine("ToDo deleted.");
                             break;
                         case 3:
                             UpdateTodo();
@@ -64,7 +64,7 @@ namespace Asana
                             break;
                         case 6:
                             if (DeleteProject() == true)
-                                Console.WriteLine("Project deleted");
+                                Console.WriteLine("Project deleted.");
                             break;
                         case 7:
                             UpdateProject();
@@ -76,13 +76,13 @@ namespace Asana
                             ListGivenProjectToDo();
                             break;
                         default:
-                            Console.WriteLine("ERROR: Unknown menu selection");
+                            Console.WriteLine("ERROR: Unknown menu selection.");
                             break;
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"ERROR: {choice} is not a valid menu selection");
+                    Console.WriteLine($"ERROR: {choice} is not a valid menu selection.");
                 }
 
             } while (choiceInt != 0);
@@ -107,13 +107,13 @@ namespace Asana
                 }
                 else
                 {
-                    Console.WriteLine("ToDo ID invalid");
+                    Console.WriteLine("ToDo ID invalid.");
                     return false;
                 }
             }
             else
             {
-                Console.WriteLine("ToDo ID invalid");
+                Console.WriteLine("ToDo ID invalid.");
                 return false;
             }
         }
@@ -146,7 +146,7 @@ namespace Asana
                     else
                         done = false;
                     toDos[index].IsCompleted = done;
-                    Console.WriteLine("ToDo updated");
+                    Console.WriteLine("ToDo updated.");
                     return;
                 }
             }
@@ -177,13 +177,13 @@ namespace Asana
                 }
                 else
                 {
-                    Console.WriteLine("Project ID invalid");
+                    Console.WriteLine("Project ID invalid.");
                     return false;
                 }
             }
             else
             {
-                Console.WriteLine("Project ID invalid");
+                Console.WriteLine("Project ID invalid.");
                 return false;
             }
 
@@ -208,10 +208,10 @@ namespace Asana
                     Console.Write("Description: ");
                     projects[index].Description = Console.ReadLine();
                     Console.Write("Add ToDo to Project (ToDo ID): ");
-                    if(int.TryParse(Console.ReadLine(), out int toDoId))
+                    if (int.TryParse(Console.ReadLine(), out int toDoId))
                     {
                         int toDoIndex = -1;
-                        for(int i = 0; i < toDos.Count; i++)
+                        for (int i = 0; i < toDos.Count; i++)
                             if (toDos[i].Id == toDoId)
                             {
                                 toDoIndex = i;
@@ -222,8 +222,10 @@ namespace Asana
                     Console.Write("Completion Percentage: ");
                     if (int.TryParse(Console.ReadLine(), out int percent))
                         projects[index].CompletionPercent = percent;
-                    
+
                 }
+                else
+                    Console.WriteLine("Project ID not found.");
             }
         }
         private static void ListAllProjects()
@@ -253,7 +255,7 @@ namespace Asana
                 Console.WriteLine("Project ID invalid");
                 return;
             }
-            Console.Write($"ToDos in {proj.Name}:");
+            Console.WriteLine($"ToDos in {proj.Name}:");
             foreach (var t in proj.ToDos)
             {
                 Console.WriteLine($"#{t.Id}: {t}");
