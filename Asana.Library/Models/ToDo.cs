@@ -28,7 +28,8 @@ namespace Asana.Library.Models
                 comp = "Completed";
             string proj = Project != null ? $" (Project: {Project.Name})" : "";
             string prio = Priority.HasValue ? $" [Priority: {Priority}]" : "";
-            return $"{Name} - {Description} - {comp}{prio}{proj}";
+            string due = DueDate.HasValue ? $" [Due: {DueDate:yyyy-MM-dd}]" : "";
+            return $"{Name} - {Description} - {comp}{prio}{proj}{due}";
         }
     }
 }

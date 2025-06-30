@@ -96,7 +96,6 @@ namespace Asana.Library.Services
             {
                 return;
             }
-            // Remove from project if assigned
             if (toDo.Project != null)
             {
                 toDo.Project.ToDos.Remove(toDo);

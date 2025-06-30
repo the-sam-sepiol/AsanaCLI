@@ -1,24 +1,58 @@
-﻿namespace Asana.Maui
+﻿using Asana.Library.Services;
+using Asana.Maui.ViewModels;
+using Asana.Maui.Views;
+
+namespace Asana.Maui
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        public MainPageViewModel ViewModel { get; set; }
 
         public MainPage()
         {
             InitializeComponent();
+            ViewModel = new MainPageViewModel();
+            BindingContext = ViewModel;
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        private void ContentPage_NavigatedTo(object sender, NavigatedToEventArgs e)
         {
-            count++;
+            ViewModel.RefreshToDos();
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+        private async void AddNewClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(ToDoDetailView));
+        }
+
+        private async void EditClicked(object sender, EventArgs e)
+        {
+            if (ViewModel.SelectedToDo?.Model?.Id > 0)
+            {
+                await Shell.Current.GoToAsync($"{nameof(ToDoDetailView)}?ToDoId={ViewModel.SelectedToDo.Model.Id}");
+            }
+        }
+
+        private void DeleteClicked(object sender, EventArgs e)
+        {
+            if (ViewModel.SelectedToDo?.Model != null)
+            {
+                ViewModel.DeleteToDo(ViewModel.SelectedToDo.Model);
+            }
+        }
+
+        private void InLineDeleteClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.BindingContext is ToDoViewModel toDoViewModel)
+            {
+                ViewModel.DeleteToDo(toDoViewModel.Model);
+            }
+        }
+
+        private async void ProjectClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(ProjectsPage));
         }
     }
 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Asana.Maui.Views.ProjectsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             NavigatedTo="ContentPage_NavigatedTo"
+             Title="Project Management">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+            
+            <ListView x:Name="ProjectsListView" 
+                      ItemsSource="{Binding Projects}"
+                      SelectedItem="{Binding SelectedProject}"
+                      HeightRequest="400">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- Project Name -->
+                                <Label Grid.Row="0" Grid.Column="0" 
+                                       Text="{Binding Model.Name}" 
+                                       FontAttributes="Bold" 
+                                       FontSize="18" />
+                                
+                                <!-- Project Description -->
+                                <Label Grid.Row="1" Grid.Column="0" 
+                                       Text="{Binding Model.Description}" 
+                                       FontSize="14" 
+                                       TextColor="Gray" />
+                                
+                                <!-- Completion Percentage -->
+                                <Label Grid.Row="2" Grid.Column="0" 
+                                       Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0}%'}" 
+                                       FontSize="12" 
+                                       TextColor="Blue" />
+                                
+                                <!-- ToDos in Project -->
+                                <Label Grid.Row="3" Grid.Column="0" 
+                                       Text="{Binding ToDosList}" 
+                                       FontSize="12" 
+                                       TextColor="Green" />
+                                
+                                <!-- Delete Button -->
+                                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="4"
+                                        Text="Delete" 
+                                        Clicked="InLineDeleteClicked" 
+                                        BackgroundColor="Red" 
+                                        TextColor="White" 
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                <Button x:Name="AddNewBtn" 
+                        Text="Add New Project" 
+                        Clicked="AddNewClicked" 
+                        BackgroundColor="Green" 
+                        TextColor="White" />
+                
+                <Button x:Name="EditBtn" 
+                        Text="Edit Selected" 
+                        Clicked="EditClicked" 
+                        BackgroundColor="Blue" 
+                        TextColor="White" />
+                
+                <Button x:Name="DeleteBtn" 
+                        Text="Delete Selected" 
+                        Clicked="DeleteClicked" 
+                        BackgroundColor="Red" 
+                        TextColor="White" />
+            </StackLayout>
+
+            <!-- Back Button -->
+            <Button x:Name="BackBtn" 
+                    Text="Back to ToDos" 
+                    Clicked="BackClicked" 
+                    BackgroundColor="Gray" 
+                    TextColor="White" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
