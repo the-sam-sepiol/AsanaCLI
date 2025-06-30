@@ -32,7 +32,7 @@ namespace Asana
                 {
                     switch (choiceInt)
                     {
-                        case 1: // Create ToDo
+                        case 1: 
                             Console.Write("Name: ");
                             var name = Console.ReadLine();
                             Console.Write("Description: ");
@@ -102,10 +102,10 @@ namespace Asana
 
                             }
                             break;
-                        case 4: // List all ToDos
+                        case 4: 
                             toDoSvc.DisplayToDos(true);
                             break;
-                        case 5: // Create Project
+                        case 5: 
                             Console.Write("Project Name: ");
                             var projName = Console.ReadLine();
                             Console.Write("Project Description: ");
@@ -117,14 +117,14 @@ namespace Asana
                                 Id = 0
                             });
                             break;
-                        case 6: // Delete Project
+                        case 6: 
                             projectSvc.DisplayProjects();
                             Console.Write("Project to Delete: ");
                             var projDel = int.Parse(Console.ReadLine() ?? "0");
                             var projectToDelete = projectSvc.GetById(projDel);
                             projectSvc.DeleteProject(projectToDelete);
                             break;
-                        case 7: // Update Project
+                        case 7: 
                             projectSvc.DisplayProjects();
                             Console.Write("Project to Update: ");
                             var projUpd = int.Parse(Console.ReadLine() ?? "0");
@@ -138,10 +138,10 @@ namespace Asana
                                 projectSvc.AddOrUpdate(projectToUpdate);
                             }
                             break;
-                        case 8: // List all Projects
+                        case 8: 
                             projectSvc.DisplayProjects();
                             break;
-                        case 9: // List all ToDos in a Project
+                        case 9: 
                             projectSvc.DisplayProjects();
                             Console.Write("Project Id: ");
                             var projId = int.Parse(Console.ReadLine() ?? "0");
