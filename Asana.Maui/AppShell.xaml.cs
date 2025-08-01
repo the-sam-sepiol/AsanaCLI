@@ -13,6 +13,9 @@ namespace Asana.Maui
             Routing.RegisterRoute(nameof(ToDoDetailView), typeof(ToDoDetailView));
             Routing.RegisterRoute(nameof(ProjectsPage), typeof(ProjectsPage));
             Routing.RegisterRoute(nameof(ProjectDetailView), typeof(ProjectDetailView));
+            
+            // Start with LoginView
+            CurrentItem = Items.FirstOrDefault(item => item.Route == "LoginView");
         }
     }
 }

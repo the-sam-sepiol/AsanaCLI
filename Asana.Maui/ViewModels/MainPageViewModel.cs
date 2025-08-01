@@ -52,12 +52,16 @@ namespace Asana.Maui.ViewModels
             LogoutCommand = new Command(async () => await LogoutAsync());
             ExportDataCommand = new Command(async () => await ExportDataAsync());
             ImportDataCommand = new Command(async () => await ImportDataAsync());
+            
+            // Subscribe to user changes
+            CurrentUserService.Current.UserChanged += (s, e) => RefreshToDos();
+            
             RefreshToDos();
         }
 
         public ICommand LogoutCommand { get; set; }
 
-        public string CurrentUserName => CurrentUserService.Current.CurrentUser?.Name ?? "No User";
+        public string CurrentUserName => CurrentUserService.Current.CurrentUser?.Name ?? "Not logged in (showing unassigned todos)";
         public bool IsUserLoggedIn => CurrentUserService.Current.IsLoggedIn;
 
         public ObservableCollection<ToDoViewModel> ToDos { get; set; } = new ObservableCollection<ToDoViewModel>();
@@ -149,10 +153,17 @@ namespace Asana.Maui.ViewModels
             // Get current user
             var currentUser = CurrentUserService.Current.CurrentUser;
             
-            // Filter todos based on current user
-            var todos = currentUser != null 
-                ? ToDoServiceProxy.Current.GetToDosForUser(currentUser.Id)
-                : ToDoServiceProxy.Current.GetUnassignedToDos();
+            List<ToDo> todos;
+            if (currentUser != null)
+            {
+                // Filter todos based on current user
+                todos = ToDoServiceProxy.Current.GetToDosForUser(currentUser.Id);
+            }
+            else
+            {
+                // If no user is logged in, show all unassigned todos
+                todos = ToDoServiceProxy.Current.GetUnassignedToDos();
+            }
             
             var filteredTodos = todos
                 .Where(t => IsShowCompleted || t.IsCompleted != true)
@@ -164,6 +175,10 @@ namespace Asana.Maui.ViewModels
             }
             
             ApplySortingAndFiltering();
+            
+            // Notify UI about user status changes
+            NotifyPropertyChanged(nameof(CurrentUserName));
+            NotifyPropertyChanged(nameof(IsUserLoggedIn));
         }
 
         private void SortToDos(string sortOption)

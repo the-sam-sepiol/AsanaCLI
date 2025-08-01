@@ -40,11 +40,13 @@ namespace Asana.Maui.Services
         public void Login(User user)
         {
             _currentUser = user;
+            OnUserChanged();
         }
 
         public void Logout()
         {
             _currentUser = null;
+            OnUserChanged();
         }
 
         public event EventHandler? UserChanged;
