@@ -17,6 +17,7 @@
 
     <ScrollView>
         <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+
             
             <!-- Current User Display -->
             <Frame BackgroundColor="DarkBlue" Padding="8" CornerRadius="3">
@@ -36,7 +37,7 @@
                             Padding="6,3" />
                 </Grid>
             </Frame>
-            
+
             <!-- Search Section -->
             <Frame BackgroundColor="LightGray" Padding="10" CornerRadius="5">
                 <Grid ColumnDefinitions="*,Auto">
