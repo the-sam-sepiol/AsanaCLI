@@ -131,7 +131,7 @@ namespace Asana.Maui.Services
                             break;
                         case "COMPLETION":
                             if (double.TryParse(value, out double completion))
-                                project.CompletionPercent = completion;
+                                project.CompletionPercent = (int)Math.Round(completion);
                             break;
                     }
                 }
@@ -168,7 +168,7 @@ namespace Asana.Maui.Services
                             todo.Description = string.IsNullOrEmpty(value) ? null : value;
                             break;
                         case "PRIORITY":
-                            if (Enum.TryParse<Priority>(value, out Priority priority))
+                            if (int.TryParse(value, out int priority))
                                 todo.Priority = priority;
                             break;
                         case "DUE_DATE":
