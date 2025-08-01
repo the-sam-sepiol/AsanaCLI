@@ -2,11 +2,35 @@
 <ContentPage x:Class="Asana.Maui.MainPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Asana.Maui.Converters"
              NavigatedTo="ContentPage_NavigatedTo"
              Title="Asana Task Manager">
 
+    <ContentPage.Resources>
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+    </ContentPage.Resources>
+
     <ScrollView>
         <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+            
+            <!-- Search Section -->
+            <Frame BackgroundColor="LightGray" Padding="10" CornerRadius="5">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Entry Grid.Column="0"
+                           Text="{Binding SearchText}"
+                           Placeholder="Search todos..."
+                           FontSize="16"
+                           BackgroundColor="White"
+                           ClearButtonVisibility="WhileEditing" />
+                    <Button Grid.Column="1"
+                            Text="Clear"
+                            Command="{Binding ClearSearchCommand}"
+                            BackgroundColor="DarkBlue"
+                            TextColor="White"
+                            Margin="5,0,0,0"
+                            IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
+                </Grid>
+            </Frame>
             
             <!-- Show CheckBox -->
             <StackLayout Orientation="Horizontal">
@@ -49,6 +73,19 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.EmptyView>
+                    <StackLayout Padding="20">
+                        <Label Text="No todos found"
+                               FontSize="16"
+                               TextColor="Gray"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding SearchText, StringFormat='Try adjusting your search: &quot;{0}&quot;'}"
+                               FontSize="14"
+                               TextColor="Gray"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
+                    </StackLayout>
+                </ListView.EmptyView>
             </ListView>
 
             <!-- Action Buttons -->
