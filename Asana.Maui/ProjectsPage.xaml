@@ -32,61 +32,60 @@
                 </Grid>
             </Frame>
             
-            <ListView x:Name="ProjectsListView" 
-                      ItemsSource="{Binding Projects}"
-                      SelectedItem="{Binding SelectedProject}"
-                      HeightRequest="400">
-                <ListView.ItemTemplate>
+            <CollectionView x:Name="ProjectsCollectionView" 
+                            ItemsSource="{Binding Projects}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedProject}"
+                            HeightRequest="400">
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                
-                                <!-- Project Name -->
-                                <Label Grid.Row="0" Grid.Column="0" 
-                                       Text="{Binding Model.Name}" 
-                                       FontAttributes="Bold" 
-                                       FontSize="18" />
-                                
-                                <!-- Project Description -->
-                                <Label Grid.Row="1" Grid.Column="0" 
-                                       Text="{Binding Model.Description}" 
-                                       FontSize="14" 
-                                       TextColor="Gray" />
-                                
-                                <!-- Completion Percentage -->
-                                <Label Grid.Row="2" Grid.Column="0" 
-                                       Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0}%'}" 
-                                       FontSize="12" 
-                                       TextColor="Blue" />
-                                
-                                <!-- ToDos in Project -->
-                                <Label Grid.Row="3" Grid.Column="0" 
-                                       Text="{Binding ToDosList}" 
-                                       FontSize="12" 
-                                       TextColor="Green" />
-                                
-                                <!-- Delete Button -->
-                                <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="4"
-                                        Text="Delete" 
-                                        Clicked="InLineDeleteClicked" 
-                                        BackgroundColor="Red" 
-                                        TextColor="White" 
-                                        VerticalOptions="Center" />
-                            </Grid>
-                        </ViewCell>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Project Name -->
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding Model.Name}" 
+                                   FontAttributes="Bold" 
+                                   FontSize="18" />
+                            
+                            <!-- Project Description -->
+                            <Label Grid.Row="1" Grid.Column="0" 
+                                   Text="{Binding Model.Description}" 
+                                   FontSize="14" 
+                                   TextColor="Gray" />
+                            
+                            <!-- Completion Percentage -->
+                            <Label Grid.Row="2" Grid.Column="0" 
+                                   Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0}%'}" 
+                                   FontSize="12" 
+                                   TextColor="Blue" />
+                            
+                            <!-- ToDos in Project -->
+                            <Label Grid.Row="3" Grid.Column="0" 
+                                   Text="{Binding ToDosList}" 
+                                   FontSize="12" 
+                                   TextColor="Green" />
+                            
+                            <!-- Delete Button -->
+                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="4"
+                                    Text="Delete" 
+                                    Clicked="InLineDeleteClicked" 
+                                    BackgroundColor="Red" 
+                                    TextColor="White" 
+                                    VerticalOptions="Center" />
+                        </Grid>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.EmptyView>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
                     <StackLayout Padding="20">
                         <Label Text="No projects found"
                                FontSize="16"
@@ -98,8 +97,8 @@
                                HorizontalOptions="Center"
                                IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
                     </StackLayout>
-                </ListView.EmptyView>
-            </ListView>
+                </CollectionView.EmptyView>
+            </CollectionView>
 
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                 <Button x:Name="AddNewBtn" 

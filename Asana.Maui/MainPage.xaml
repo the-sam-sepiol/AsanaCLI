@@ -39,41 +39,40 @@
                 <Label Text="Show Completed Tasks" VerticalOptions="Center" />
             </StackLayout>
 
-            <!-- ToDo ListView -->
-            <ListView x:Name="ToDoListView" 
-                      ItemsSource="{Binding ToDos}"
-                      SelectedItem="{Binding SelectedToDo}"
-                      HeightRequest="300">
-                <ListView.ItemTemplate>
+            <!-- ToDo CollectionView -->
+            <CollectionView x:Name="ToDoCollectionView" 
+                            ItemsSource="{Binding ToDos}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedToDo}"
+                            HeightRequest="300">
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                
-                                <StackLayout Grid.Column="0" Orientation="Vertical">
-                                    <Label Text="{Binding Model.Name}" FontAttributes="Bold" FontSize="Small"/>
-                                    <Label Text="{Binding Model.Description}" />
-                                    <Label Text="{Binding Model.Priority, StringFormat='Priority: {0}'}"
-                                           FontSize="Small" TextColor="Blue" />                                        
-                                    <Label Text="{Binding Model.Project.Name, StringFormat='Project: {0}'}" 
-                                           FontSize="Small" TextColor="Gray" />
-                                    <Label Text="{Binding Model.DueDate, StringFormat='Due: {0:yyyy-MM-dd}'}" 
-                                           FontSize="Small" TextColor="Red" />
-                                </StackLayout>
-                                
-                                <Button Grid.Column="1" 
-                                        Text="Delete" 
-                                        Clicked="InLineDeleteClicked" 
-                                        BackgroundColor="Red" 
-                                        TextColor="White" />
-                            </Grid>
-                        </ViewCell>
+                        <Grid Padding="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackLayout Grid.Column="0" Orientation="Vertical">
+                                <Label Text="{Binding Model.Name}" FontAttributes="Bold" FontSize="Small"/>
+                                <Label Text="{Binding Model.Description}" />
+                                <Label Text="{Binding Model.Priority, StringFormat='Priority: {0}'}"
+                                       FontSize="Small" TextColor="Blue" />                                        
+                                <Label Text="{Binding Model.Project.Name, StringFormat='Project: {0}'}" 
+                                       FontSize="Small" TextColor="Gray" />
+                                <Label Text="{Binding Model.DueDate, StringFormat='Due: {0:yyyy-MM-dd}'}" 
+                                       FontSize="Small" TextColor="Red" />
+                            </StackLayout>
+                            
+                            <Button Grid.Column="1" 
+                                    Text="Delete" 
+                                    Clicked="InLineDeleteClicked" 
+                                    BackgroundColor="Red" 
+                                    TextColor="White" />
+                        </Grid>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.EmptyView>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
                     <StackLayout Padding="20">
                         <Label Text="No todos found"
                                FontSize="16"
@@ -85,8 +84,8 @@
                                HorizontalOptions="Center"
                                IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
                     </StackLayout>
-                </ListView.EmptyView>
-            </ListView>
+                </CollectionView.EmptyView>
+            </CollectionView>
 
             <!-- Action Buttons -->
             <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
