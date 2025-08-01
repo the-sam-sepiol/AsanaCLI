@@ -99,6 +99,14 @@ namespace Asana.Maui.ViewModels
             }
             
             ApplySortingAndFiltering();
+            
+            // Notify that project todos may have changed
+            foreach (var project in _allProjects)
+            {
+                project.NotifyPropertyChanged(nameof(project.ProjectToDos));
+                project.NotifyPropertyChanged(nameof(project.ToDoCount));
+                project.NotifyPropertyChanged(nameof(project.ToDoListHeight));
+            }
         }
 
         private void SortProjects(string sortOption)

@@ -74,6 +74,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -84,7 +85,8 @@
                             <Label Grid.Row="0" Grid.Column="0" 
                                    Text="{Binding Model.Name}" 
                                    FontAttributes="Bold" 
-                                   FontSize="18" />
+                                   FontSize="18" 
+                                   TextColor="DarkBlue" />
                             
                             <!-- Project Description -->
                             <Label Grid.Row="1" Grid.Column="0" 
@@ -94,18 +96,68 @@
                             
                             <!-- Completion Percentage -->
                             <Label Grid.Row="2" Grid.Column="0" 
-                                   Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0}%'}" 
+                                   Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0:F1}%'}" 
                                    FontSize="12" 
                                    TextColor="Blue" />
                             
-                            <!-- ToDos in Project -->
+                            <!-- ToDos Count -->
                             <Label Grid.Row="3" Grid.Column="0" 
                                    Text="{Binding ToDoCount, StringFormat='ToDos: {0}'}" 
                                    FontSize="12" 
-                                   TextColor="Green" />
+                                   TextColor="Green" 
+                                   FontAttributes="Bold" />
+                            
+                            <!-- ToDos List -->
+                            <StackLayout Grid.Row="4" Grid.Column="0" 
+                                         Margin="20,5,0,0">
+                                <CollectionView ItemsSource="{Binding ProjectToDos}"
+                                                HeightRequest="{Binding ToDoListHeight}">
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Padding="5,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <!-- Completion Status -->
+                                                <Label Grid.Column="0" 
+                                                       Text="{Binding CompletionIcon}" 
+                                                       FontSize="14"
+                                                       VerticalOptions="Center"
+                                                       Margin="0,0,10,0" />
+                                                
+                                                <!-- ToDo Name -->
+                                                <Label Grid.Column="1" 
+                                                       Text="{Binding Name}" 
+                                                       FontSize="12"
+                                                       TextColor="{Binding TextColor}"
+                                                       TextDecorations="{Binding TextDecoration}"
+                                                       VerticalOptions="Center" />
+                                                
+                                                <!-- Priority -->
+                                                <Label Grid.Column="2" 
+                                                       Text="{Binding Priority}" 
+                                                       FontSize="10"
+                                                       TextColor="Orange"
+                                                       VerticalOptions="Center"
+                                                       Margin="10,0,0,0" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                    <CollectionView.EmptyView>
+                                        <Label Text="📝 No todos in this project" 
+                                               FontSize="12" 
+                                               TextColor="LightGray"
+                                               HorizontalOptions="Center"
+                                               Padding="10" />
+                                    </CollectionView.EmptyView>
+                                </CollectionView>
+                            </StackLayout>
                             
                             <!-- Delete Button -->
-                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="4"
+                            <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="5"
                                     Text="Delete" 
                                     Clicked="InLineDeleteClicked" 
                                     BackgroundColor="Red" 

@@ -1,10 +1,20 @@
 using Asana.Library.Models;
 using Asana.Library.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Asana.Maui.ViewModels
 {
+    public class ToDoDisplayItem
+    {
+        public string Name { get; set; } = string.Empty;
+        public string CompletionIcon { get; set; } = string.Empty;
+        public Color TextColor { get; set; } = Colors.Black;
+        public TextDecorations TextDecoration { get; set; } = TextDecorations.None;
+        public string Priority { get; set; } = string.Empty;
+    }
+
     public class ProjectViewModel : INotifyPropertyChanged
     {
         public Project? Model { get; set; }
@@ -17,6 +27,44 @@ namespace Asana.Maui.ViewModels
             {
                 if (Model?.Id == null) return 0;
                 return ToDoServiceProxy.Current.ToDos.Count(t => t.ProjectId == Model.Id);
+            }
+        }
+
+        public ObservableCollection<ToDoDisplayItem> ProjectToDos
+        {
+            get
+            {
+                var todos = new ObservableCollection<ToDoDisplayItem>();
+                if (Model?.Id == null) return todos;
+
+                var projectTodos = ToDoServiceProxy.Current.ToDos
+                    .Where(t => t.ProjectId == Model.Id)
+                    .OrderBy(t => t.IsCompleted)
+                    .ThenBy(t => t.Name);
+
+                foreach (var todo in projectTodos)
+                {
+                    todos.Add(new ToDoDisplayItem
+                    {
+                        Name = todo.Name ?? "Unnamed Todo",
+                        CompletionIcon = todo.IsCompleted == true ? "✅" : "⭕",
+                        TextColor = todo.IsCompleted == true ? Colors.Gray : Colors.Black,
+                        TextDecoration = todo.IsCompleted == true ? TextDecorations.Strikethrough : TextDecorations.None,
+                        Priority = todo.Priority?.ToString() ?? "None"
+                    });
+                }
+
+                return todos;
+            }
+        }
+
+        public double ToDoListHeight
+        {
+            get
+            {
+                var count = ToDoCount;
+                if (count == 0) return 30; // Height for "No todos" message
+                return Math.Min(count * 35, 200); // Max height of 200 with scrolling
             }
         }
 
@@ -44,7 +92,7 @@ namespace Asana.Maui.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
         
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
