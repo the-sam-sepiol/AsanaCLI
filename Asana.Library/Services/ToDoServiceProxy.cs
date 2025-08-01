@@ -68,6 +68,12 @@ namespace Asana.Library.Services
                 toDo.Project = ProjectServiceProxy.Current.GetById(toDo.ProjectId.Value);
             }
 
+            // Ensure User object is set if AssignedUserId is provided
+            if (toDo.AssignedUserId.HasValue && toDo.AssignedUserId > 0 && toDo.AssignedUser == null)
+            {
+                toDo.AssignedUser = UserServiceProxy.Current.GetById(toDo.AssignedUserId.Value);
+            }
+
             if (toDo.Id == 0)
             {
                 toDo.Id = nextKey;
@@ -86,11 +92,19 @@ namespace Asana.Library.Services
                     existing.DueDate = toDo.DueDate;
                     existing.ProjectId = toDo.ProjectId;
                     existing.Project = toDo.Project;
+                    existing.AssignedUserId = toDo.AssignedUserId;
+                    existing.AssignedUser = toDo.AssignedUser;
                     
                     // Ensure Project object is set for existing todo too
                     if (existing.ProjectId.HasValue && existing.ProjectId > 0 && existing.Project == null)
                     {
                         existing.Project = ProjectServiceProxy.Current.GetById(existing.ProjectId.Value);
+                    }
+                    
+                    // Ensure User object is set for existing todo too
+                    if (existing.AssignedUserId.HasValue && existing.AssignedUserId > 0 && existing.AssignedUser == null)
+                    {
+                        existing.AssignedUser = UserServiceProxy.Current.GetById(existing.AssignedUserId.Value);
                     }
                 }
                 else
@@ -140,6 +154,16 @@ namespace Asana.Library.Services
         public ToDo? GetById(int id)
         {
             return ToDos.FirstOrDefault(t => t.Id == id);
+        }
+
+        public List<ToDo> GetToDosForUser(int userId)
+        {
+            return ToDos.Where(t => t.AssignedUserId == userId).ToList();
+        }
+
+        public List<ToDo> GetUnassignedToDos()
+        {
+            return ToDos.Where(t => t.AssignedUserId == null || t.AssignedUserId == 0).ToList();
         }
 
         public void DeleteToDo(ToDo? toDo)

@@ -1,10 +1,17 @@
 using Asana.Library.Models;
 using Asana.Library.Services;
+using Asana.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace Asana.Maui.ViewModels
 {
+    public class UserViewModel
+    {
+        public User? Model { get; set; }
+        public string DisplayText => Model?.Name ?? "Unknown User";
+    }
+
     public class ToDoDetailViewModel
     {
         public ToDoDetailViewModel()
@@ -59,7 +66,49 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public ProjectViewModel? SelectedProject
+        public ObservableCollection<UserViewModel> Users
+        {
+            get
+            {
+                var allUsers = new List<UserViewModel>
+                {
+                    new UserViewModel { Model = new User { Id = 0, Name = "Unassigned" } }
+                };
+                
+                var users = UserServiceProxy.Current.Users
+                    .Select(u => new UserViewModel { Model = u });
+                
+                allUsers.AddRange(users);
+                return new ObservableCollection<UserViewModel>(allUsers);
+            }
+        }
+
+        public UserViewModel? SelectedUser
+        {
+            get
+            {
+                if (Model?.AssignedUserId == null || Model.AssignedUserId == 0)
+                    return Users.FirstOrDefault(u => u.Model?.Id == 0);
+                
+                return Users.FirstOrDefault(u => u.Model?.Id == Model?.AssignedUserId);
+            }
+            set
+            {
+                if (Model != null)
+                {
+                    if (value?.Model?.Id == 0)
+                    {
+                        Model.AssignedUserId = null;
+                        Model.AssignedUser = null;
+                    }
+                    else
+                    {
+                        Model.AssignedUserId = value?.Model?.Id;
+                        Model.AssignedUser = value?.Model;
+                    }
+                }
+            }
+        }
         {
             get
             {

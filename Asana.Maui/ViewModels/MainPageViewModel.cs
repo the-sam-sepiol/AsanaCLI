@@ -49,10 +49,16 @@ namespace Asana.Maui.ViewModels
                 IsGroupedView = !IsGroupedView;
                 ApplySortingAndFiltering();
             });
+            LogoutCommand = new Command(async () => await LogoutAsync());
             ExportDataCommand = new Command(async () => await ExportDataAsync());
             ImportDataCommand = new Command(async () => await ImportDataAsync());
             RefreshToDos();
         }
+
+        public ICommand LogoutCommand { get; set; }
+
+        public string CurrentUserName => CurrentUserService.Current.CurrentUser?.Name ?? "No User";
+        public bool IsUserLoggedIn => CurrentUserService.Current.IsLoggedIn;
 
         public ObservableCollection<ToDoViewModel> ToDos { get; set; } = new ObservableCollection<ToDoViewModel>();
         public ObservableCollection<ProjectGroupViewModel> GroupedToDos { get; set; } = new ObservableCollection<ProjectGroupViewModel>();
@@ -139,11 +145,20 @@ namespace Asana.Maui.ViewModels
         public void RefreshToDos()
         {
             _allToDos.Clear();
-            var todos = ToDoServiceProxy.Current.ToDos
+            
+            // Get current user
+            var currentUser = CurrentUserService.Current.CurrentUser;
+            
+            // Filter todos based on current user
+            var todos = currentUser != null 
+                ? ToDoServiceProxy.Current.GetToDosForUser(currentUser.Id)
+                : ToDoServiceProxy.Current.GetUnassignedToDos();
+            
+            var filteredTodos = todos
                 .Where(t => IsShowCompleted || t.IsCompleted != true)
                 .Select(t => new ToDoViewModel { Model = t });
 
-            foreach (var todo in todos)
+            foreach (var todo in filteredTodos)
             {
                 _allToDos.Add(todo);
             }
@@ -327,6 +342,26 @@ namespace Asana.Maui.ViewModels
             catch (Exception ex)
             {
                 await Application.Current?.MainPage?.DisplayAlert("Import Failed", 
+                    $"Error: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task LogoutAsync()
+        {
+            try
+            {
+                var result = await Application.Current?.MainPage?.DisplayAlert("Logout", 
+                    "Are you sure you want to logout?", "Yes", "No");
+                
+                if (result == true)
+                {
+                    CurrentUserService.Current.Logout();
+                    await Shell.Current.GoToAsync("//LoginView");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current?.MainPage?.DisplayAlert("Logout Error", 
                     $"Error: {ex.Message}", "OK");
             }
         }
