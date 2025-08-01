@@ -11,15 +11,15 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="10" Padding="15,5" VerticalOptions="FillAndExpand">
+        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
             
             <!-- Search Section -->
-            <Frame BackgroundColor="LightGray" Padding="8" CornerRadius="3">
+            <Frame BackgroundColor="LightGray" Padding="10" CornerRadius="5">
                 <Grid ColumnDefinitions="*,Auto">
                     <Entry Grid.Column="0"
                            Text="{Binding SearchText}"
                            Placeholder="Search projects..."
-                           FontSize="14"
+                           FontSize="16"
                            BackgroundColor="White"
                            ClearButtonVisibility="WhileEditing" />
                     <Button Grid.Column="1"
@@ -27,43 +27,37 @@
                             Command="{Binding ClearSearchCommand}"
                             BackgroundColor="DarkBlue"
                             TextColor="White"
-                            FontSize="12"
-                            Padding="8,4"
                             Margin="5,0,0,0"
                             IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
                 </Grid>
             </Frame>
 
             <!-- Sort Section -->
-            <Frame BackgroundColor="LightBlue" Padding="8" CornerRadius="3">
+            <Frame BackgroundColor="LightBlue" Padding="10" CornerRadius="5">
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto">
                     <Label Grid.Column="0" 
-                           Text="Sort:" 
+                           Text="Sort by:" 
                            VerticalOptions="Center" 
-                           FontSize="12"
                            FontAttributes="Bold" />
                     
                     <Picker Grid.Column="1" 
                             ItemsSource="{Binding SortOptions}"
                             SelectedItem="{Binding SelectedSortOption, Converter={StaticResource EnumToStringConverter}}"
                             BackgroundColor="White"
-                            FontSize="12"
-                            Margin="5,0" />
+                            Margin="10,0" />
                     
                     <Button Grid.Column="2"
                             Text="{Binding SortDirectionText}"
                             Command="{Binding ToggleSortDirectionCommand}"
                             BackgroundColor="Orange"
                             TextColor="White"
-                            FontSize="11"
-                            Padding="6,3"
-                            WidthRequest="50" />
+                            WidthRequest="60" />
                     
                     <Label Grid.Column="3" 
                            Text="📊" 
-                           FontSize="16"
+                           FontSize="20"
                            VerticalOptions="Center"
-                           Margin="5,0,0,0" />
+                           Margin="10,0,0,0" />
                 </Grid>
             </Frame>
             
@@ -71,7 +65,7 @@
                             ItemsSource="{Binding Projects}"
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedProject}"
-                            HeightRequest="450">
+                            HeightRequest="400">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10">
@@ -187,47 +181,39 @@
                 </CollectionView.EmptyView>
             </CollectionView>
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="8">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
                 <Button x:Name="AddNewBtn" 
                         Text="Add New Project" 
                         Clicked="AddNewClicked" 
                         BackgroundColor="Green" 
-                        TextColor="White"
-                        FontSize="12"
-                        Padding="8,4" />
+                        TextColor="White" />
                 
                 <Button x:Name="EditBtn" 
                         Text="Edit Selected" 
                         Clicked="EditClicked" 
                         BackgroundColor="Blue" 
-                        TextColor="White"
-                        FontSize="12"
-                        Padding="8,4" />
+                        TextColor="White" />
                 
                 <Button x:Name="DeleteBtn" 
                         Text="Delete Selected" 
                         Clicked="DeleteClicked" 
                         BackgroundColor="Red" 
-                        TextColor="White"
-                        FontSize="12"
-                        Padding="8,4" />
+                        TextColor="White" />
             </StackLayout>
 
             <!-- Export/Import Buttons -->
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="8">
-                <Button Text="📤 Export" 
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
+                <Button Text="📤 Export Data" 
                         Command="{Binding ExportDataCommand}"
                         BackgroundColor="Purple" 
                         TextColor="White"
-                        FontSize="11"
-                        Padding="6,3" />
+                        FontSize="12" />
                 
-                <Button Text="📥 Import" 
+                <Button Text="📥 Import Data" 
                         Command="{Binding ImportDataCommand}"
                         BackgroundColor="Teal" 
                         TextColor="White"
-                        FontSize="11"
-                        Padding="6,3" />
+                        FontSize="12" />
             </StackLayout>
 
             <!-- Back Button -->
@@ -235,10 +221,7 @@
                     Text="Back to ToDos" 
                     Clicked="BackClicked" 
                     BackgroundColor="Gray" 
-                    TextColor="White"
-                    FontSize="12"
-                    Padding="8,4"
-                    HorizontalOptions="Center" />
+                    TextColor="White" />
 
         </VerticalStackLayout>
     </ScrollView>
