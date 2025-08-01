@@ -16,6 +16,15 @@ namespace Asana.Maui.ViewModels
         Project
     }
 
+    public class ProjectGroupViewModel
+    {
+        public string ProjectName { get; set; } = string.Empty;
+        public int ProjectId { get; set; }
+        public ObservableCollection<ToDoViewModel> ToDos { get; set; } = new ObservableCollection<ToDoViewModel>();
+        public int CompletionPercent { get; set; }
+        public string TodoCountText => $"{ToDos.Count} todo(s)";
+    }
+
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private bool _isShowCompleted;
@@ -24,6 +33,7 @@ namespace Asana.Maui.ViewModels
         private ObservableCollection<ToDoViewModel> _allToDos = new ObservableCollection<ToDoViewModel>();
         private ToDoSortOption _selectedSortOption = ToDoSortOption.Name;
         private bool _isSortDescending = false;
+        private bool _isGroupedView = false;
 
         public MainPageViewModel()
         {
@@ -34,12 +44,33 @@ namespace Asana.Maui.ViewModels
                 IsSortDescending = !IsSortDescending;
                 ApplySortingAndFiltering();
             });
+            ToggleGroupViewCommand = new Command(() => 
+            {
+                IsGroupedView = !IsGroupedView;
+                ApplySortingAndFiltering();
+            });
             ExportDataCommand = new Command(async () => await ExportDataAsync());
             ImportDataCommand = new Command(async () => await ImportDataAsync());
             RefreshToDos();
         }
 
         public ObservableCollection<ToDoViewModel> ToDos { get; set; } = new ObservableCollection<ToDoViewModel>();
+        public ObservableCollection<ProjectGroupViewModel> GroupedToDos { get; set; } = new ObservableCollection<ProjectGroupViewModel>();
+
+        public bool IsGroupedView
+        {
+            get => _isGroupedView;
+            set
+            {
+                _isGroupedView = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(GroupViewButtonText));
+            }
+        }
+
+        public string GroupViewButtonText => IsGroupedView ? "List View" : "Group View";
+
+        public ICommand ToggleGroupViewCommand { get; set; }
 
         public string SearchText
         {
@@ -143,7 +174,7 @@ namespace Asana.Maui.ViewModels
                 filteredToDos = filteredToDos.Where(todo =>
                     todo.Model?.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
                     todo.Model?.Description?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
-                    todo.Model?.ProjectId?.ToString().Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true
+                    todo.Model?.Project?.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true
                 );
             }
 
@@ -165,10 +196,54 @@ namespace Asana.Maui.ViewModels
                 _ => filteredToDos
             };
 
-            ToDos.Clear();
-            foreach (var todo in filteredToDos)
+            if (IsGroupedView)
             {
-                ToDos.Add(todo);
+                // Group by project
+                PopulateGroupedView(filteredToDos);
+            }
+            else
+            {
+                // Regular list view
+                ToDos.Clear();
+                foreach (var todo in filteredToDos)
+                {
+                    ToDos.Add(todo);
+                }
+            }
+        }
+
+        private void PopulateGroupedView(IEnumerable<ToDoViewModel> filteredToDos)
+        {
+            GroupedToDos.Clear();
+            
+            var grouped = filteredToDos.GroupBy(t => new 
+            { 
+                ProjectId = t.Model?.ProjectId ?? 0, 
+                ProjectName = t.Model?.Project?.Name ?? "No Project" 
+            });
+
+            foreach (var group in grouped.OrderBy(g => g.Key.ProjectName))
+            {
+                var projectGroup = new ProjectGroupViewModel
+                {
+                    ProjectId = group.Key.ProjectId,
+                    ProjectName = group.Key.ProjectName
+                };
+
+                // Calculate completion percentage for this group
+                var todoList = group.ToList();
+                if (todoList.Any())
+                {
+                    var completedCount = todoList.Count(t => t.Model?.IsCompleted == true);
+                    projectGroup.CompletionPercent = (int)Math.Round((completedCount * 100.0) / todoList.Count);
+                }
+
+                foreach (var todo in group.OrderBy(t => t.Model?.IsCompleted).ThenBy(t => t.Model?.Name))
+                {
+                    projectGroup.ToDos.Add(todo);
+                }
+
+                GroupedToDos.Add(projectGroup);
             }
         }
 

@@ -8,6 +8,11 @@
 
     <ContentPage.Resources>
         <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+        <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <!-- Inverse Bool Converter -->
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <!-- Bool to Icon Converter -->
+        <converters:BoolToIconConverter x:Key="BoolToIconConverter" />
     </ContentPage.Resources>
 
     <ScrollView>
@@ -34,7 +39,7 @@
 
             <!-- Sort Section -->
             <Frame BackgroundColor="LightBlue" Padding="10" CornerRadius="5">
-                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                     <Label Grid.Column="0" 
                            Text="Sort by:" 
                            VerticalOptions="Center" 
@@ -53,7 +58,15 @@
                             TextColor="White"
                             WidthRequest="60" />
                     
-                    <Label Grid.Column="3" 
+                    <Button Grid.Column="3"
+                            Text="{Binding GroupViewButtonText}"
+                            Command="{Binding ToggleGroupViewCommand}"
+                            BackgroundColor="Teal"
+                            TextColor="White"
+                            FontSize="12"
+                            Margin="5,0" />
+                    
+                    <Label Grid.Column="4" 
                            Text="📊" 
                            FontSize="20"
                            VerticalOptions="Center"
@@ -68,12 +81,13 @@
                 <Label Text="Show Completed Tasks" VerticalOptions="Center" />
             </StackLayout>
 
-            <!-- ToDo CollectionView -->
+            <!-- Regular ToDo CollectionView -->
             <CollectionView x:Name="ToDoCollectionView" 
                             ItemsSource="{Binding ToDos}"
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedToDo}"
-                            HeightRequest="300">
+                            HeightRequest="300"
+                            IsVisible="{Binding IsGroupedView, Converter={StaticResource InverseBoolConverter}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10">
@@ -112,6 +126,110 @@
                                TextColor="Gray"
                                HorizontalOptions="Center"
                                IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <!-- Grouped ToDo CollectionView -->
+            <CollectionView x:Name="GroupedToDoCollectionView" 
+                            ItemsSource="{Binding GroupedToDos}"
+                            HeightRequest="300"
+                            IsVisible="{Binding IsGroupedView}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Padding="10" BackgroundColor="LightGray" Margin="0,5">
+                            <!-- Project Header -->
+                            <Grid BackgroundColor="DarkBlue" Padding="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <Label Grid.Column="0" 
+                                       Text="{Binding ProjectName}" 
+                                       FontAttributes="Bold" 
+                                       FontSize="16" 
+                                       TextColor="White" />
+                                
+                                <Label Grid.Column="1" 
+                                       Text="{Binding TodoCountText}" 
+                                       FontSize="12" 
+                                       TextColor="LightGray" 
+                                       Margin="10,0" />
+                                
+                                <Label Grid.Column="2" 
+                                       Text="{Binding CompletionPercent, StringFormat='{0}%'}" 
+                                       FontSize="12" 
+                                       TextColor="Yellow" 
+                                       FontAttributes="Bold" />
+                            </Grid>
+                            
+                            <!-- Todos in this project -->
+                            <CollectionView ItemsSource="{Binding ToDos}" 
+                                            BackgroundColor="White">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="15,5" Margin="10,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Completion Status -->
+                                            <Label Grid.Column="0" 
+                                                   Text="{Binding Model.IsCompleted, Converter={StaticResource BoolToIconConverter}}" 
+                                                   FontSize="16"
+                                                   VerticalOptions="Center"
+                                                   Margin="0,0,10,0" />
+                                            
+                                            <!-- Todo Details -->
+                                            <StackLayout Grid.Column="1" Orientation="Vertical">
+                                                <Label Text="{Binding Model.Name}" 
+                                                       FontAttributes="Bold" 
+                                                       FontSize="14"/>
+                                                <Label Text="{Binding Model.Description}" 
+                                                       FontSize="12" 
+                                                       TextColor="Gray" />
+                                                <StackLayout Orientation="Horizontal">
+                                                    <Label Text="{Binding Model.Priority, StringFormat='Priority: {0}'}"
+                                                           FontSize="10" 
+                                                           TextColor="Blue" />
+                                                    <Label Text="{Binding Model.DueDate, StringFormat='Due: {0:MM/dd}'}" 
+                                                           FontSize="10" 
+                                                           TextColor="Red" 
+                                                           Margin="15,0,0,0" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                            
+                                            <Button Grid.Column="2" 
+                                                    Text="Delete" 
+                                                    Clicked="InLineDeleteClicked" 
+                                                    BackgroundColor="Red" 
+                                                    TextColor="White"
+                                                    FontSize="10"
+                                                    Padding="5" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                                <CollectionView.EmptyView>
+                                    <Label Text="📝 No todos in this project" 
+                                           FontSize="12" 
+                                           TextColor="Gray"
+                                           HorizontalOptions="Center"
+                                           Padding="20" />
+                                </CollectionView.EmptyView>
+                            </CollectionView>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="20">
+                        <Label Text="No project groups found"
+                               FontSize="16"
+                               TextColor="Gray"
+                               HorizontalOptions="Center" />
                     </StackLayout>
                 </CollectionView.EmptyView>
             </CollectionView>

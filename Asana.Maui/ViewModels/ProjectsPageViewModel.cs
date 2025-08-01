@@ -200,14 +200,11 @@ namespace Asana.Maui.ViewModels
         {
             try
             {
-                var result = await Application.Current?.MainPage?.DisplayAlert("Import Data", 
-                    "This will replace all current data. Continue?", "Yes", "Cancel");
-                
                 if (result != true) return;
 
                 var filePath = await Application.Current?.MainPage?.DisplayPromptAsync("Import File", 
                     "Enter the full path to the export file:", 
-                    placeholder: "/path/to/export/file.txt");
+                    placeholder: "");
 
                 if (string.IsNullOrWhiteSpace(filePath)) return;
 
@@ -225,12 +222,12 @@ namespace Asana.Maui.ViewModels
                 {
                     RefreshProjects();
                     await Application.Current?.MainPage?.DisplayAlert("Import Successful", 
-                        "Data imported successfully!", "OK");
+                        "Data imported!", "OK");
                 }
                 else
                 {
                     await Application.Current?.MainPage?.DisplayAlert("Import Failed", 
-                        "Failed to parse the import file.", "OK");
+                        "Failed to parse file.", "OK");
                 }
             }
             catch (Exception ex)
