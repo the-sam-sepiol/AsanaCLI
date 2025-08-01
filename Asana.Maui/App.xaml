@@ -13,6 +13,7 @@
             
             <!-- Global Converters -->
             <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
+            <converters:EnumToStringConverter x:Key="EnumToStringConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
 using Asana.Library.Models;
+using Asana.Library.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -9,6 +10,15 @@ namespace Asana.Maui.ViewModels
         public Project? Model { get; set; }
 
         public string DisplayText => $"{Model?.Id ?? -1}. {Model?.Name}";
+
+        public int ToDoCount
+        {
+            get
+            {
+                if (Model?.Id == null) return 0;
+                return ToDoServiceProxy.Current.ToDos.Count(t => t.ProjectId == Model.Id);
+            }
+        }
 
         public string ToDosList
         {

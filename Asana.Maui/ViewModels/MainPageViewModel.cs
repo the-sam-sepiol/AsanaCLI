@@ -7,16 +7,32 @@ using System.Windows.Input;
 
 namespace Asana.Maui.ViewModels
 {
+    public enum ToDoSortOption
+    {
+        Name,
+        Priority,
+        DueDate,
+        Project
+    }
+
     public class MainPageViewModel : INotifyPropertyChanged
     {
         private bool _isShowCompleted;
         private ToDoViewModel? _selectedToDo;
         private string _searchText = string.Empty;
         private ObservableCollection<ToDoViewModel> _allToDos = new ObservableCollection<ToDoViewModel>();
+        private ToDoSortOption _selectedSortOption = ToDoSortOption.Name;
+        private bool _isSortDescending = false;
 
         public MainPageViewModel()
         {
             ClearSearchCommand = new Command(() => SearchText = string.Empty);
+            SortCommand = new Command<string>(SortToDos);
+            ToggleSortDirectionCommand = new Command(() => 
+            {
+                IsSortDescending = !IsSortDescending;
+                ApplySortingAndFiltering();
+            });
             RefreshToDos();
         }
 
@@ -29,11 +45,39 @@ namespace Asana.Maui.ViewModels
             {
                 _searchText = value;
                 NotifyPropertyChanged();
-                FilterToDos();
+                ApplySortingAndFiltering();
             }
         }
 
         public ICommand ClearSearchCommand { get; set; }
+        public ICommand SortCommand { get; set; }
+        public ICommand ToggleSortDirectionCommand { get; set; }
+
+        public ToDoSortOption SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                _selectedSortOption = value;
+                NotifyPropertyChanged();
+                ApplySortingAndFiltering();
+            }
+        }
+
+        public bool IsSortDescending
+        {
+            get => _isSortDescending;
+            set
+            {
+                _isSortDescending = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(SortDirectionText));
+            }
+        }
+
+        public string SortDirectionText => IsSortDescending ? "DESC" : "ASC";
+
+        public List<string> SortOptions => new List<string> { "Name", "Priority", "DueDate", "Project" };
 
         public bool IsShowCompleted
         {
@@ -68,24 +112,55 @@ namespace Asana.Maui.ViewModels
                 _allToDos.Add(todo);
             }
             
+            ApplySortingAndFiltering();
+        }
+
+        private void SortToDos(string sortOption)
+        {
+            if (Enum.TryParse<ToDoSortOption>(sortOption, out var option))
+            {
+                SelectedSortOption = option;
+            }
+        }
+
+        private void ApplySortingAndFiltering()
+        {
             FilterToDos();
         }
 
         private void FilterToDos()
         {
-            ToDos.Clear();
-            
             IEnumerable<ToDoViewModel> filteredToDos = _allToDos;
             
+            // Apply search filter
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                filteredToDos = _allToDos.Where(todo =>
+                filteredToDos = filteredToDos.Where(todo =>
                     todo.Model?.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
                     todo.Model?.Description?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
                     todo.Model?.ProjectId?.ToString().Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true
                 );
             }
 
+            // Apply sorting
+            filteredToDos = SelectedSortOption switch
+            {
+                ToDoSortOption.Name => IsSortDescending 
+                    ? filteredToDos.OrderByDescending(t => t.Model?.Name) 
+                    : filteredToDos.OrderBy(t => t.Model?.Name),
+                ToDoSortOption.Priority => IsSortDescending 
+                    ? filteredToDos.OrderByDescending(t => t.Model?.Priority) 
+                    : filteredToDos.OrderBy(t => t.Model?.Priority),
+                ToDoSortOption.DueDate => IsSortDescending 
+                    ? filteredToDos.OrderByDescending(t => t.Model?.DueDate) 
+                    : filteredToDos.OrderBy(t => t.Model?.DueDate),
+                ToDoSortOption.Project => IsSortDescending 
+                    ? filteredToDos.OrderByDescending(t => t.Model?.Project?.Name) 
+                    : filteredToDos.OrderBy(t => t.Model?.Project?.Name),
+                _ => filteredToDos
+            };
+
+            ToDos.Clear();
             foreach (var todo in filteredToDos)
             {
                 ToDos.Add(todo);

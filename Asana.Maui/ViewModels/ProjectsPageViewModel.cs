@@ -7,15 +7,30 @@ using System.Windows.Input;
 
 namespace Asana.Maui.ViewModels
 {
+    public enum ProjectSortOption
+    {
+        Name,
+        TodoCount,
+        CompletionPercent
+    }
+
     public class ProjectsPageViewModel : INotifyPropertyChanged
     {
         private ProjectViewModel? _selectedProject;
         private string _searchText = string.Empty;
         private ObservableCollection<ProjectViewModel> _allProjects = new ObservableCollection<ProjectViewModel>();
+        private ProjectSortOption _selectedSortOption = ProjectSortOption.Name;
+        private bool _isSortDescending = false;
 
         public ProjectsPageViewModel()
         {
             ClearSearchCommand = new Command(() => SearchText = string.Empty);
+            SortCommand = new Command<string>(SortProjects);
+            ToggleSortDirectionCommand = new Command(() => 
+            {
+                IsSortDescending = !IsSortDescending;
+                ApplySortingAndFiltering();
+            });
             RefreshProjects();
         }
 
@@ -28,11 +43,39 @@ namespace Asana.Maui.ViewModels
             {
                 _searchText = value;
                 NotifyPropertyChanged();
-                FilterProjects();
+                ApplySortingAndFiltering();
             }
         }
 
         public ICommand ClearSearchCommand { get; set; }
+        public ICommand SortCommand { get; set; }
+        public ICommand ToggleSortDirectionCommand { get; set; }
+
+        public ProjectSortOption SelectedSortOption
+        {
+            get => _selectedSortOption;
+            set
+            {
+                _selectedSortOption = value;
+                NotifyPropertyChanged();
+                ApplySortingAndFiltering();
+            }
+        }
+
+        public bool IsSortDescending
+        {
+            get => _isSortDescending;
+            set
+            {
+                _isSortDescending = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(SortDirectionText));
+            }
+        }
+
+        public string SortDirectionText => IsSortDescending ? "DESC" : "ASC";
+
+        public List<string> SortOptions => new List<string> { "Name", "TodoCount", "CompletionPercent" };
 
         public ProjectViewModel? SelectedProject
         {
@@ -55,27 +98,61 @@ namespace Asana.Maui.ViewModels
                 _allProjects.Add(project);
             }
             
+            ApplySortingAndFiltering();
+        }
+
+        private void SortProjects(string sortOption)
+        {
+            if (Enum.TryParse<ProjectSortOption>(sortOption, out var option))
+            {
+                SelectedSortOption = option;
+            }
+        }
+
+        private void ApplySortingAndFiltering()
+        {
             FilterProjects();
         }
 
         private void FilterProjects()
         {
-            Projects.Clear();
-            
             IEnumerable<ProjectViewModel> filteredProjects = _allProjects;
             
+            // Apply search filter
             if (!string.IsNullOrWhiteSpace(SearchText))
             {
-                filteredProjects = _allProjects.Where(project =>
+                filteredProjects = filteredProjects.Where(project =>
                     project.Model?.Name?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true ||
                     project.Model?.Description?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true
                 );
             }
 
+            // Apply sorting
+            filteredProjects = SelectedSortOption switch
+            {
+                ProjectSortOption.Name => IsSortDescending 
+                    ? filteredProjects.OrderByDescending(p => p.Model?.Name) 
+                    : filteredProjects.OrderBy(p => p.Model?.Name),
+                ProjectSortOption.TodoCount => IsSortDescending 
+                    ? filteredProjects.OrderByDescending(p => GetTodoCount(p.Model)) 
+                    : filteredProjects.OrderBy(p => GetTodoCount(p.Model)),
+                ProjectSortOption.CompletionPercent => IsSortDescending 
+                    ? filteredProjects.OrderByDescending(p => p.Model?.CompletionPercent) 
+                    : filteredProjects.OrderBy(p => p.Model?.CompletionPercent),
+                _ => filteredProjects
+            };
+
+            Projects.Clear();
             foreach (var project in filteredProjects)
             {
                 Projects.Add(project);
             }
+        }
+
+        private int GetTodoCount(Project? project)
+        {
+            if (project?.Id == null) return 0;
+            return ToDoServiceProxy.Current.ToDos.Count(t => t.ProjectId == project.Id);
         }
 
         public void DeleteProject(Project? project)

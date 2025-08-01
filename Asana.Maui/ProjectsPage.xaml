@@ -31,6 +31,35 @@
                             IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
                 </Grid>
             </Frame>
+
+            <!-- Sort Section -->
+            <Frame BackgroundColor="LightBlue" Padding="10" CornerRadius="5">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <Label Grid.Column="0" 
+                           Text="Sort by:" 
+                           VerticalOptions="Center" 
+                           FontAttributes="Bold" />
+                    
+                    <Picker Grid.Column="1" 
+                            ItemsSource="{Binding SortOptions}"
+                            SelectedItem="{Binding SelectedSortOption, Converter={StaticResource EnumToStringConverter}}"
+                            BackgroundColor="White"
+                            Margin="10,0" />
+                    
+                    <Button Grid.Column="2"
+                            Text="{Binding SortDirectionText}"
+                            Command="{Binding ToggleSortDirectionCommand}"
+                            BackgroundColor="Orange"
+                            TextColor="White"
+                            WidthRequest="60" />
+                    
+                    <Label Grid.Column="3" 
+                           Text="📊" 
+                           FontSize="20"
+                           VerticalOptions="Center"
+                           Margin="10,0,0,0" />
+                </Grid>
+            </Frame>
             
             <CollectionView x:Name="ProjectsCollectionView" 
                             ItemsSource="{Binding Projects}"
@@ -71,7 +100,7 @@
                             
                             <!-- ToDos in Project -->
                             <Label Grid.Row="3" Grid.Column="0" 
-                                   Text="{Binding ToDosList}" 
+                                   Text="{Binding ToDoCount, StringFormat='ToDos: {0}'}" 
                                    FontSize="12" 
                                    TextColor="Green" />
                             
