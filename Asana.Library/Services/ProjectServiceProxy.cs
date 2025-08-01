@@ -7,7 +7,7 @@ namespace Asana.Library.Services
 {
     public class ProjectServiceProxy
     {
-        private List<Project> _projectList;
+        private List<Project> _projectList = new List<Project>();
 
         public List<Project> Projects
         {
@@ -26,9 +26,7 @@ namespace Asana.Library.Services
 
         private ProjectServiceProxy()
         {
-            Projects = new List<Project>
-            {
-            };
+            // _projectList is already initialized above
         }
 
         private static ProjectServiceProxy? instance;
@@ -80,6 +78,13 @@ namespace Asana.Library.Services
                     existing.Description = project.Description;
                     existing.ToDos = project.ToDos ?? new List<ToDo>();
                     existing.CompletionPercent = CalculateCompletionPercent(existing);
+                }
+                else
+                {
+                    // Add new project with specific ID
+                    if (project.ToDos == null)
+                        project.ToDos = new List<ToDo>();
+                    _projectList.Add(project);
                 }
             }
             return project;

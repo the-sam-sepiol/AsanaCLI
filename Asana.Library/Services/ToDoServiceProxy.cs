@@ -9,7 +9,7 @@ namespace Asana.Library.Services
 {
     public class ToDoServiceProxy
     {
-        private List<ToDo> _toDoList;
+        private List<ToDo> _toDoList = new List<ToDo>();
         public List<ToDo> ToDos
         {
             get
@@ -28,9 +28,7 @@ namespace Asana.Library.Services
 
         private ToDoServiceProxy()
         {
-            ToDos = new List<ToDo>
-            {
-            };
+            // _toDoList is already initialized above
         }
 
         private static ToDoServiceProxy? instance;
@@ -61,11 +59,35 @@ namespace Asana.Library.Services
         }
         public ToDo? AddOrUpdate(ToDo? toDo)
         {
-            if (toDo != null && toDo.Id == 0)
+            if (toDo == null)
+                return null;
+
+            if (toDo.Id == 0)
             {
                 toDo.Id = nextKey;
                 _toDoList.Add(toDo);
             }
+            else
+            {
+                var existing = GetById(toDo.Id);
+                if (existing != null)
+                {
+                    // Update existing todo
+                    existing.Name = toDo.Name;
+                    existing.Description = toDo.Description;
+                    existing.Priority = toDo.Priority;
+                    existing.IsCompleted = toDo.IsCompleted;
+                    existing.DueDate = toDo.DueDate;
+                    existing.ProjectId = toDo.ProjectId;
+                    existing.Project = toDo.Project;
+                }
+                else
+                {
+                    // Add new todo with specific ID
+                    _toDoList.Add(toDo);
+                }
+            }
+
             if (toDo?.Project != null)
                 ProjectServiceProxy.Current.AddOrUpdate(toDo.Project);
             return toDo;

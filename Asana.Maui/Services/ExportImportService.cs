@@ -95,6 +95,11 @@ namespace Asana.Maui.Services
                     ToDoServiceProxy.Current.AddOrUpdate(todo);
                 }
 
+                // Debug: Check if data was actually imported
+                System.Diagnostics.Debug.WriteLine($"Imported {projects.Count} projects and {todos.Count} todos");
+                System.Diagnostics.Debug.WriteLine($"Total projects in service: {ProjectServiceProxy.Current.Projects.Count}");
+                System.Diagnostics.Debug.WriteLine($"Total todos in service: {ToDoServiceProxy.Current.ToDos.Count}");
+
                 return true;
             }
             catch (Exception)
