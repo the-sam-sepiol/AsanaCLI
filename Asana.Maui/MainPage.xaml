@@ -16,15 +16,15 @@
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="10" Padding="15,5" VerticalOptions="FillAndExpand">
             
             <!-- Search Section -->
-            <Frame BackgroundColor="LightGray" Padding="10" CornerRadius="5">
+            <Frame BackgroundColor="LightGray" Padding="8" CornerRadius="3">
                 <Grid ColumnDefinitions="*,Auto">
                     <Entry Grid.Column="0"
                            Text="{Binding SearchText}"
                            Placeholder="Search todos..."
-                           FontSize="16"
+                           FontSize="14"
                            BackgroundColor="White"
                            ClearButtonVisibility="WhileEditing" />
                     <Button Grid.Column="1"
@@ -32,53 +32,62 @@
                             Command="{Binding ClearSearchCommand}"
                             BackgroundColor="DarkBlue"
                             TextColor="White"
+                            FontSize="12"
+                            Padding="8,4"
                             Margin="5,0,0,0"
                             IsVisible="{Binding SearchText, Converter={StaticResource StringToBoolConverter}}" />
                 </Grid>
             </Frame>
 
             <!-- Sort Section -->
-            <Frame BackgroundColor="LightBlue" Padding="10" CornerRadius="5">
+            <Frame BackgroundColor="LightBlue" Padding="8" CornerRadius="3">
                 <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto">
                     <Label Grid.Column="0" 
-                           Text="Sort by:" 
+                           Text="Sort:" 
                            VerticalOptions="Center" 
+                           FontSize="12"
                            FontAttributes="Bold" />
                     
                     <Picker Grid.Column="1" 
                             ItemsSource="{Binding SortOptions}"
                             SelectedItem="{Binding SelectedSortOption, Converter={StaticResource EnumToStringConverter}}"
                             BackgroundColor="White"
-                            Margin="10,0" />
+                            FontSize="12"
+                            Margin="5,0" />
                     
                     <Button Grid.Column="2"
                             Text="{Binding SortDirectionText}"
                             Command="{Binding ToggleSortDirectionCommand}"
                             BackgroundColor="Orange"
                             TextColor="White"
-                            WidthRequest="60" />
+                            FontSize="11"
+                            Padding="6,3"
+                            WidthRequest="50" />
                     
                     <Button Grid.Column="3"
                             Text="{Binding GroupViewButtonText}"
                             Command="{Binding ToggleGroupViewCommand}"
                             BackgroundColor="Teal"
                             TextColor="White"
-                            FontSize="12"
-                            Margin="5,0" />
+                            FontSize="11"
+                            Padding="6,3"
+                            Margin="3,0" />
                     
                     <Label Grid.Column="4" 
                            Text="📊" 
-                           FontSize="20"
+                           FontSize="16"
                            VerticalOptions="Center"
-                           Margin="10,0,0,0" />
+                           Margin="5,0,0,0" />
                 </Grid>
             </Frame>
             
             <!-- Show CheckBox -->
-            <StackLayout Orientation="Horizontal">
+            <StackLayout Orientation="Horizontal" Spacing="5">
                 <CheckBox x:Name="ShowCompletedCheckBox" 
                         IsChecked="{Binding IsShowCompleted}" />
-                <Label Text="Show Completed Tasks" VerticalOptions="Center" />
+                <Label Text="Show Completed Tasks" 
+                       VerticalOptions="Center" 
+                       FontSize="12" />
             </StackLayout>
 
             <!-- Regular ToDo CollectionView -->
@@ -86,7 +95,7 @@
                             ItemsSource="{Binding ToDos}"
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedToDo}"
-                            HeightRequest="300"
+                            HeightRequest="450"
                             IsVisible="{Binding IsGroupedView, Converter={StaticResource InverseBoolConverter}}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -133,7 +142,7 @@
             <!-- Grouped ToDo CollectionView -->
             <CollectionView x:Name="GroupedToDoCollectionView" 
                             ItemsSource="{Binding GroupedToDos}"
-                            HeightRequest="300"
+                            HeightRequest="450"
                             IsVisible="{Binding IsGroupedView}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -235,39 +244,47 @@
             </CollectionView>
 
             <!-- Action Buttons -->
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="8">
                 <Button x:Name="AddNewBtn" 
                         Text="Add New ToDo" 
                         Clicked="AddNewClicked" 
                         BackgroundColor="Green" 
-                        TextColor="White" />
+                        TextColor="White"
+                        FontSize="12"
+                        Padding="8,4" />
                 
                 <Button x:Name="EditBtn" 
                         Text="Edit Selected" 
                         Clicked="EditClicked" 
                         BackgroundColor="Blue" 
-                        TextColor="White" />
+                        TextColor="White"
+                        FontSize="12"
+                        Padding="8,4" />
                 
                 <Button x:Name="DeleteBtn" 
                         Text="Delete Selected" 
                         Clicked="DeleteClicked" 
                         BackgroundColor="Red" 
-                        TextColor="White" />
+                        TextColor="White"
+                        FontSize="12"
+                        Padding="8,4" />
             </StackLayout>
 
             <!-- Export/Import Buttons -->
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
-                <Button Text="📤 Export Data" 
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="8">
+                <Button Text="📤 Export" 
                         Command="{Binding ExportDataCommand}"
                         BackgroundColor="Purple" 
                         TextColor="White"
-                        FontSize="12" />
+                        FontSize="11"
+                        Padding="6,3" />
                 
-                <Button Text="📥 Import Data" 
+                <Button Text="📥 Import" 
                         Command="{Binding ImportDataCommand}"
                         BackgroundColor="Teal" 
                         TextColor="White"
-                        FontSize="12" />
+                        FontSize="11"
+                        Padding="6,3" />
             </StackLayout>
 
             <!-- Project Management Button -->
@@ -275,7 +292,10 @@
                     Text="Manage Projects" 
                     Clicked="ProjectClicked" 
                     BackgroundColor="Purple" 
-                    TextColor="White" />
+                    TextColor="White"
+                    FontSize="12"
+                    Padding="8,4"
+                    HorizontalOptions="Center" />
 
         </VerticalStackLayout>
     </ScrollView>
