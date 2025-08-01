@@ -200,14 +200,8 @@ namespace Asana.Maui.ViewModels
         {
             try
             {
-                var result = await Application.Current?.MainPage?.DisplayAlert("Import Data", 
-                    "This will replace all current data. Continue?", "Yes", "Cancel");
-                
-                if (result != true) return;
-
                 var filePath = await Application.Current?.MainPage?.DisplayPromptAsync("Import File", 
-                    "Enter the full path to the export file:", 
-                    placeholder: "");
+                    "Enter the full path to the export file:");
 
                 if (string.IsNullOrWhiteSpace(filePath)) return;
 

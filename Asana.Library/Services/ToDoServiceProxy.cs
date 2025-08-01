@@ -62,6 +62,12 @@ namespace Asana.Library.Services
             if (toDo == null)
                 return null;
 
+            // Ensure Project object is set if ProjectId is provided
+            if (toDo.ProjectId.HasValue && toDo.ProjectId > 0 && toDo.Project == null)
+            {
+                toDo.Project = ProjectServiceProxy.Current.GetById(toDo.ProjectId.Value);
+            }
+
             if (toDo.Id == 0)
             {
                 toDo.Id = nextKey;
@@ -80,6 +86,12 @@ namespace Asana.Library.Services
                     existing.DueDate = toDo.DueDate;
                     existing.ProjectId = toDo.ProjectId;
                     existing.Project = toDo.Project;
+                    
+                    // Ensure Project object is set for existing todo too
+                    if (existing.ProjectId.HasValue && existing.ProjectId > 0 && existing.Project == null)
+                    {
+                        existing.Project = ProjectServiceProxy.Current.GetById(existing.ProjectId.Value);
+                    }
                 }
                 else
                 {

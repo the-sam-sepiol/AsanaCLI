@@ -216,10 +216,27 @@ namespace Asana.Maui.ViewModels
         {
             GroupedToDos.Clear();
             
-            var grouped = filteredToDos.GroupBy(t => new 
-            { 
-                ProjectId = t.Model?.ProjectId ?? 0, 
-                ProjectName = t.Model?.Project?.Name ?? "No Project" 
+            var grouped = filteredToDos.GroupBy(t => 
+            {
+                var projectId = t.Model?.ProjectId ?? 0;
+                string projectName = "No Project";
+                
+                if (projectId > 0)
+                {
+                    // Try to get project name from the Project object first
+                    if (!string.IsNullOrEmpty(t.Model?.Project?.Name))
+                    {
+                        projectName = t.Model.Project.Name;
+                    }
+                    else
+                    {
+                        // If Project object is null, fetch from service
+                        var project = ProjectServiceProxy.Current.GetById(projectId);
+                        projectName = project?.Name ?? $"Project {projectId}";
+                    }
+                }
+                
+                return new { ProjectId = projectId, ProjectName = projectName };
             });
 
             foreach (var group in grouped.OrderBy(g => g.Key.ProjectName))
@@ -278,16 +295,10 @@ namespace Asana.Maui.ViewModels
         {
             try
             {
-                var result = await Application.Current?.MainPage?.DisplayAlert("Import Data", 
-                    "This will replace all current data. Continue?", "Yes", "Cancel");
-                
-                if (result != true) return;
-
                 // For now, we'll use a simple input dialog to get file path
                 // In a production app, you'd use a file picker
                 var filePath = await Application.Current?.MainPage?.DisplayPromptAsync("Import File", 
-                    "Enter the full path to the export file:", 
-                    placeholder: "/path/to/export/file.txt");
+                    "Enter the full path to the export file:");
 
                 if (string.IsNullOrWhiteSpace(filePath)) return;
 
