@@ -88,8 +88,26 @@ namespace Asana.Library.Services
                 }
             }
 
-            if (toDo?.Project != null)
+            // Always update the project's completion percentage if the todo belongs to a project
+            if (toDo?.ProjectId != null && toDo.ProjectId > 0)
+            {
+                var project = ProjectServiceProxy.Current.GetById(toDo.ProjectId.Value);
+                if (project != null)
+                {
+                    // Ensure the todo is in the project's todo list
+                    if (!project.ToDos.Contains(toDo))
+                    {
+                        project.ToDos.Add(toDo);
+                    }
+                    // This will recalculate the completion percentage
+                    ProjectServiceProxy.Current.AddOrUpdate(project);
+                }
+            }
+            else if (toDo?.Project != null)
+            {
+                // Fallback for when Project object is available but ProjectId might not be set
                 ProjectServiceProxy.Current.AddOrUpdate(toDo.Project);
+            }
             return toDo;
         }
 

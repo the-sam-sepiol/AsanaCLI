@@ -111,6 +111,7 @@ namespace Asana.Maui.ViewModels
                 project.NotifyPropertyChanged(nameof(project.ProjectToDos));
                 project.NotifyPropertyChanged(nameof(project.ToDoCount));
                 project.NotifyPropertyChanged(nameof(project.ToDoListHeight));
+                project.NotifyPropertyChanged(nameof(project.CompletionPercent));
             }
         }
 

@@ -17,9 +17,41 @@ namespace Asana.Maui.ViewModels
 
     public class ProjectViewModel : INotifyPropertyChanged
     {
-        public Project? Model { get; set; }
+        private Project? _model;
+        public Project? Model 
+        { 
+            get => _model;
+            set 
+            {
+                if (_model != value)
+                {
+                    _model = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(DisplayText));
+                    NotifyPropertyChanged(nameof(ToDoCount));
+                    NotifyPropertyChanged(nameof(CompletionPercent));
+                    NotifyPropertyChanged(nameof(ProjectToDos));
+                    NotifyPropertyChanged(nameof(ToDoListHeight));
+                    NotifyPropertyChanged(nameof(ToDosList));
+                }
+            }
+        }
 
         public string DisplayText => $"{Model?.Id ?? -1}. {Model?.Name}";
+
+        public int CompletionPercent => Model?.CompletionPercent ?? 0;
+
+        public void RefreshFromService()
+        {
+            if (Model?.Id != null && Model.Id > 0)
+            {
+                var updatedProject = ProjectServiceProxy.Current.GetById(Model.Id);
+                if (updatedProject != null)
+                {
+                    Model = updatedProject;
+                }
+            }
+        }
 
         public int ToDoCount
         {

@@ -96,7 +96,7 @@
                             
                             <!-- Completion Percentage -->
                             <Label Grid.Row="2" Grid.Column="0" 
-                                   Text="{Binding Model.CompletionPercent, StringFormat='Completion: {0:F1}%'}" 
+                                   Text="{Binding CompletionPercent, StringFormat='Completion: {0}%'}" 
                                    FontSize="12" 
                                    TextColor="Blue" />
                             
