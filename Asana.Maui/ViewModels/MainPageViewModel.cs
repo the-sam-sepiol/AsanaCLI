@@ -1,5 +1,6 @@
 using Asana.Library.Models;
 using Asana.Library.Services;
+using Asana.Maui.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -33,6 +34,8 @@ namespace Asana.Maui.ViewModels
                 IsSortDescending = !IsSortDescending;
                 ApplySortingAndFiltering();
             });
+            ExportDataCommand = new Command(async () => await ExportDataAsync());
+            ImportDataCommand = new Command(async () => await ImportDataAsync());
             RefreshToDos();
         }
 
@@ -52,6 +55,8 @@ namespace Asana.Maui.ViewModels
         public ICommand ClearSearchCommand { get; set; }
         public ICommand SortCommand { get; set; }
         public ICommand ToggleSortDirectionCommand { get; set; }
+        public ICommand ExportDataCommand { get; set; }
+        public ICommand ImportDataCommand { get; set; }
 
         public ToDoSortOption SelectedSortOption
         {
@@ -173,6 +178,70 @@ namespace Asana.Maui.ViewModels
             {
                 ToDoServiceProxy.Current.DeleteToDo(toDo);
                 RefreshToDos();
+            }
+        }
+
+        private async Task ExportDataAsync()
+        {
+            try
+            {
+                var exportContent = await ExportImportService.ExportToTextAsync();
+                var filePath = await ExportImportService.GetExportFilePathAsync();
+                await ExportImportService.SaveToFileAsync(exportContent, filePath);
+                
+                await Application.Current?.MainPage?.DisplayAlert("Export Successful", 
+                    $"Data exported to:\n{filePath}", "OK");
+            }
+            catch (Exception ex)
+            {
+                await Application.Current?.MainPage?.DisplayAlert("Export Failed", 
+                    $"Error: {ex.Message}", "OK");
+            }
+        }
+
+        private async Task ImportDataAsync()
+        {
+            try
+            {
+                var result = await Application.Current?.MainPage?.DisplayAlert("Import Data", 
+                    "This will replace all current data. Continue?", "Yes", "Cancel");
+                
+                if (result != true) return;
+
+                // For now, we'll use a simple input dialog to get file path
+                // In a production app, you'd use a file picker
+                var filePath = await Application.Current?.MainPage?.DisplayPromptAsync("Import File", 
+                    "Enter the full path to the export file:", 
+                    placeholder: "/path/to/export/file.txt");
+
+                if (string.IsNullOrWhiteSpace(filePath)) return;
+
+                if (!File.Exists(filePath))
+                {
+                    await Application.Current?.MainPage?.DisplayAlert("Import Failed", 
+                        "File not found.", "OK");
+                    return;
+                }
+
+                var content = await ExportImportService.LoadFromFileAsync(filePath);
+                var success = await ExportImportService.ImportFromTextAsync(content);
+
+                if (success)
+                {
+                    RefreshToDos();
+                    await Application.Current?.MainPage?.DisplayAlert("Import Successful", 
+                        "Data imported successfully!", "OK");
+                }
+                else
+                {
+                    await Application.Current?.MainPage?.DisplayAlert("Import Failed", 
+                        "Failed to parse the import file.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current?.MainPage?.DisplayAlert("Import Failed", 
+                    $"Error: {ex.Message}", "OK");
             }
         }
 

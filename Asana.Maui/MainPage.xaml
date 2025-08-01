@@ -137,6 +137,21 @@
                         TextColor="White" />
             </StackLayout>
 
+            <!-- Export/Import Buttons -->
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="10">
+                <Button Text="📤 Export Data" 
+                        Command="{Binding ExportDataCommand}"
+                        BackgroundColor="Purple" 
+                        TextColor="White"
+                        FontSize="12" />
+                
+                <Button Text="📥 Import Data" 
+                        Command="{Binding ImportDataCommand}"
+                        BackgroundColor="Teal" 
+                        TextColor="White"
+                        FontSize="12" />
+            </StackLayout>
+
             <!-- Project Management Button -->
             <Button x:Name="ProjectBtn" 
                     Text="Manage Projects" 

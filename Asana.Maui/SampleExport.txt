@@ -1,0 +1,48 @@
+=== ASANA CLI EXPORT ===
+Exported on: 2025-08-01 10:30:45
+
+=== PROJECTS ===
+PROJECT_START
+ID: 1
+NAME: Website Redesign
+DESCRIPTION: Complete overhaul of company website
+COMPLETION: 45.50
+PROJECT_END
+
+PROJECT_START
+ID: 2
+NAME: Mobile App Development
+DESCRIPTION: New iOS and Android app
+COMPLETION: 78.25
+PROJECT_END
+
+=== TODOS ===
+TODO_START
+ID: 1
+NAME: Design mockups
+DESCRIPTION: Create initial design mockups for homepage
+PRIORITY: High
+DUE_DATE: 2025-08-15
+IS_COMPLETED: False
+PROJECT_ID: 1
+TODO_END
+
+TODO_START
+ID: 2
+NAME: Database setup
+DESCRIPTION: Configure production database
+PRIORITY: Medium
+DUE_DATE: 2025-08-10
+IS_COMPLETED: True
+PROJECT_ID: 2
+TODO_END
+
+TODO_START
+ID: 3
+NAME: Write documentation
+DESCRIPTION: API documentation for new features
+PRIORITY: Low
+DUE_DATE: 
+IS_COMPLETED: False
+PROJECT_ID: -1
+TODO_END
