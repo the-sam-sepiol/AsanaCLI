@@ -1,5 +1,28 @@
-using Asana.Library.Models;
-using Asana.Library.Services;
+using Asana.Lib            // Export projects
+            exportText.AppendLine("=== PROJECTS ===");
+            foreach (var project in ProjectServiceProxy.Current.Projects)
+            {
+                exportText.AppendLine("PROJECT_START");
+                exportText.AppendLine($"ID: {project.Id}");
+                exportText.AppendLine($"NAME: {project.Name}");
+                exportText.AppendLine($"DESCRIPTION: {project.Description ?? ""}");
+                exportText.AppendLine($"COMPLETION: {project.CompletionPercent:F2}");
+                exportText.AppendLine("PROJECT_END");
+                exportText.AppendLine();
+            }
+
+            // Export users
+            exportText.AppendLine("=== USERS ===");
+            foreach (var user in UserServiceProxy.Current.Users)
+            {
+                exportText.AppendLine("USER_START");
+                exportText.AppendLine($"ID: {user.Id}");
+                exportText.AppendLine($"NAME: {user.Name}");
+                exportText.AppendLine($"EMAIL: {user.Email ?? ""}");
+                exportText.AppendLine($"USERNAME: {user.Username ?? ""}");
+                exportText.AppendLine("USER_END");
+                exportText.AppendLine();
+            }using Asana.Library.Services;
 using System.Text;
 
 namespace Asana.Maui.Services

@@ -18,6 +18,25 @@
     <ScrollView>
         <VerticalStackLayout Spacing="10" Padding="15,5" VerticalOptions="FillAndExpand">
             
+            <!-- Current User Display -->
+            <Frame BackgroundColor="DarkBlue" Padding="8" CornerRadius="3">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0" 
+                           Text="{Binding CurrentUserName, StringFormat='Logged in as: {0}'}" 
+                           TextColor="White" 
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="1"
+                            Text="Logout"
+                            Command="{Binding LogoutCommand}"
+                            BackgroundColor="Red"
+                            TextColor="White"
+                            FontSize="11"
+                            Padding="6,3" />
+                </Grid>
+            </Frame>
+            
             <!-- Search Section -->
             <Frame BackgroundColor="LightGray" Padding="8" CornerRadius="3">
                 <Grid ColumnDefinitions="*,Auto">

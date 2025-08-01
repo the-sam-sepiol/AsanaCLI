@@ -16,20 +16,20 @@ namespace Asana.Maui.ViewModels
     {
         public ToDoDetailViewModel()
         {
-            Model = new ToDo();
-            DeleteCommand = new Command(DoDelete);
+            if (Model == null)
+            {
+                Model = new ToDo();
+            }
         }
 
         public ToDoDetailViewModel(int id)
         {
             Model = ToDoServiceProxy.Current.GetById(id) ?? new ToDo();
-            DeleteCommand = new Command(DoDelete);
         }
 
         public ToDoDetailViewModel(ToDo? model)
         {
             Model = model ?? new ToDo();
-            DeleteCommand = new Command(DoDelete);
         }
 
         public ToDo? Model { get; set; }
@@ -54,18 +54,6 @@ namespace Asana.Maui.ViewModels
             }
         }
 
-        public int SelectedPriority
-        {
-            get => Model?.Priority ?? 4;
-            set
-            {
-                if (Model != null && Model.Priority != value)
-                {
-                    Model.Priority = value;
-                }
-            }
-        }
-
         public ObservableCollection<UserViewModel> Users
         {
             get
@@ -80,6 +68,18 @@ namespace Asana.Maui.ViewModels
                 
                 allUsers.AddRange(users);
                 return new ObservableCollection<UserViewModel>(allUsers);
+            }
+        }
+
+        public int SelectedPriority
+        {
+            get => Model?.Priority ?? 4;
+            set
+            {
+                if (Model != null && Model.Priority != value)
+                {
+                    Model.Priority = value;
+                }
             }
         }
 
@@ -109,6 +109,8 @@ namespace Asana.Maui.ViewModels
                 }
             }
         }
+
+        public ProjectViewModel? SelectedProject
         {
             get
             {
